@@ -8,13 +8,8 @@ import {
   Alert,
   TouchableOpacity,
   Dimensions,
+  Platform,
 } from 'react-native';
-import {
-  Camera,
-  useCameraDevices,
-  useFrameProcessor,
-} from 'react-native-vision-camera';
-import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
@@ -26,39 +21,17 @@ const { width, height } = Dimensions.get('window');
 
 const ScanScreen: React.FC = () => {
   const navigation = useNavigation();
-  const camera = useRef<Camera>(null);
-  const devices = useCameraDevices();
-  const device = devices.back;
   
   const [hasPermission, setHasPermission] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
 
   useEffect(() => {
-    requestCameraPermission();
+    // For now, simulate permission granted
+    setHasPermission(true);
   }, []);
 
-  const requestCameraPermission = async () => {
-    try {
-      const result = await request(PERMISSIONS.ANDROID.CAMERA);
-      if (result === RESULTS.GRANTED) {
-        setHasPermission(true);
-      } else {
-        Alert.alert(
-          'Camera Permission Required',
-          'Please grant camera permission to scan dishes.',
-          [
-            { text: 'Cancel', onPress: () => navigation.goBack() },
-            { text: 'Settings', onPress: () => {} },
-          ]
-        );
-      }
-    } catch (error) {
-      console.error('Permission error:', error);
-    }
-  };
-
   const handleCapture = async () => {
-    if (!camera.current || isCapturing) return;
+    if (isCapturing) return;
     
     setIsCapturing(true);
     
@@ -78,14 +51,14 @@ const ScanScreen: React.FC = () => {
     navigation.goBack();
   };
 
-  if (!hasPermission || !device) {
+  if (!hasPermission) {
     return (
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
         <View style={styles.permissionContainer}>
           <Icon name="camera-alt" size={64} color={colors.textSecondary} />
           <Text style={styles.permissionText}>
-            {!hasPermission ? 'Camera permission required' : 'Loading camera...'}
+            Loading camera...
           </Text>
         </View>
       </SafeAreaView>
@@ -96,13 +69,13 @@ const ScanScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
       
-      <Camera
-        ref={camera}
-        style={styles.camera}
-        device={device}
-        isActive={true}
-        photo={true}
-      />
+      {/* Camera placeholder - replace with actual camera implementation */}
+      <View style={styles.camera}>
+        <View style={styles.cameraPlaceholder}>
+          <Icon name="camera-alt" size={64} color={colors.textLight} />
+          <Text style={styles.cameraPlaceholderText}>Camera View</Text>
+        </View>
+      </View>
 
       {/* Overlay */}
       <View style={styles.overlay}>
@@ -171,6 +144,17 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
+  },
+  cameraPlaceholder: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.text,
+  },
+  cameraPlaceholderText: {
+    ...typography.body,
+    color: colors.textLight,
+    marginTop: spacing.md,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,

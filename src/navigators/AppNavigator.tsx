@@ -1,10 +1,13 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+import { enableScreens } from 'react-native-screens';
 import HomeScreen from '../screens/HomeScreen';
 import ScanScreen from '../screens/ScanScreen';
 import ResultScreen from '../screens/ResultScreen';
 import AboutScreen from '../screens/AboutScreen';
+
+enableScreens();
 
 const Stack = createStackNavigator();
 
